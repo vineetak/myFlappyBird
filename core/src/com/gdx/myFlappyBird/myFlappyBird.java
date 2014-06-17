@@ -14,12 +14,12 @@ import com.badlogic.gdx.math.Rectangle;
 public class myFlappyBird extends ApplicationAdapter {
 	
 	SpriteBatch batch;
-	Texture pipe,invertedPipe,background,birdTexture;
+	Texture pipeTexture,invertedPipe,background,birdTexture;
 	
-	int  mode; // 0 running -1 over
+	int  gameMode; // 0 running -1 gameover
+	
 	int x,x1,x2, xBird,yBird ;
 	int screenWidth , screenHeight;
-	int midX;
 	int pipeWidth,pipeHeight1,pipeHeight2,pipeHeight3;
 
 	// minimum and maximum height
@@ -29,15 +29,10 @@ public class myFlappyBird extends ApplicationAdapter {
 	int pipeDistance;
 	int sceneSpeed;
 	
-	// libgdx representations of the bird and pipes to detect collisions
-	
+	// libgdx representations of the bird and pipes to detect collisions	
 	Bird bird;
 
-	Rectangle pipe1Upper,pipe1Lower;
-	Rectangle pipe2Upper,pipe2Lower;
-	Rectangle pipe3Upper,pipe3Lower;
-
-	ShapeRenderer shapeRenderer;
+	Pipe pipe1,pipe2,pipe3;
 	
 	public myFlappyBird(){
 		
@@ -46,37 +41,33 @@ public class myFlappyBird extends ApplicationAdapter {
 		
 		bird = new Bird(25,0,0);
 		
-		pipe1Upper = new Rectangle();
-		pipe1Lower = new Rectangle();
-		
-		pipe2Upper = new Rectangle();
-		pipe2Lower = new Rectangle();
-		
-		pipe3Upper = new Rectangle();
-		pipe3Lower = new Rectangle();
-		
-		mode = 0;
+		pipe1 = new Pipe();
+		pipe2 = new Pipe();
+		pipe3 = new Pipe();
+
+		gameMode = 0; // game running
 	}
 	@Override
 	public void create () {
+		// create a new sprite batch to render the graphics
 		batch = new SpriteBatch();
-		// create a texture for the pipe image
-		pipe = new Texture("pipe.jpg");
+		
+		// create a texture for the pipes
+		pipeTexture = new Texture("pipe.jpg");
 		invertedPipe = new Texture("invertedPipe.jpg");
 				
+		// create the bird texture
 		birdTexture = new Texture("bird.png");
+		
 		// create a texture for the background image
 		background = new Texture("background.jpg");
-				
+		
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
 		
-
 		min = 200;
 		max = screenHeight - 350;
-		
-		midX = screenWidth /2;
-		
+			
 		pipeWidth = screenWidth / 10;
 		
 //		x = screenWidth;
@@ -87,12 +78,13 @@ public class myFlappyBird extends ApplicationAdapter {
 		x1 = screenWidth + screenWidth/2 ;
 		x2 = x1  + screenWidth/2;
 		
+		// generate the initial pipe heights randomly
 		pipeHeight1 = min + (int)(Math.random() * ((max - min) + 1));
 		pipeHeight2 = min + (int)(Math.random() * ((max - min) + 1));
 		pipeHeight3 = min + (int)(Math.random() * ((max - min) + 1));
 						
 		xBird = 200;
-		yBird = Gdx.graphics.getHeight()/2;
+		yBird = screenHeight/2;
 		
 		bird.setPosition(xBird + 35, yBird +35);
 	}
@@ -108,13 +100,13 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.draw(background, 0, 0,screenWidth,screenHeight);		
 		
 		// draw the pipes
-		batch.draw(pipe, x, 0,pipeWidth,pipeHeight1);
+		batch.draw(pipeTexture, x, 0,pipeWidth,pipeHeight1);
 		batch.draw(invertedPipe, x,pipeHeight1+ pipeDistance ,pipeWidth,screenHeight - pipeHeight1- pipeDistance);
 		
-		batch.draw(pipe, x1, 0,pipeWidth,pipeHeight2);
+		batch.draw(pipeTexture, x1, 0,pipeWidth,pipeHeight2);
 		batch.draw(invertedPipe, x1,pipeHeight2+ pipeDistance ,pipeWidth,screenHeight - pipeHeight2- pipeDistance);
 		
-		batch.draw(pipe, x2, 0,pipeWidth,pipeHeight3);
+		batch.draw(pipeTexture, x2, 0,pipeWidth,pipeHeight3);
 		batch.draw(invertedPipe, x2,pipeHeight3+ pipeDistance ,pipeWidth,screenHeight - pipeHeight3- pipeDistance);
 		
 		// draw the bird
@@ -123,7 +115,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.end();
 	
 		// if the game is over then make the bird fall
-		if(mode < 0){
+		if(gameMode < 0){
 			if(yBird > 0)
 				yBird = yBird  - 10;
 				bird.setHeight(yBird);
@@ -132,25 +124,29 @@ public class myFlappyBird extends ApplicationAdapter {
 			
 		}
 
-		// set the dimensions of the pipes to detect collision
-		pipe1Lower.set(x,0,pipeWidth,pipeHeight1);
-		pipe1Upper.set(x,pipeHeight1+ pipeDistance,pipeWidth,screenHeight - pipeHeight1- pipeDistance);
-		
-		pipe2Lower.set(x1,0,pipeWidth,pipeHeight2);
-		pipe2Upper.set(x1,pipeHeight2+ pipeDistance,pipeWidth,screenHeight - pipeHeight2- pipeDistance);
-		
-		pipe3Lower.set(x2,0,pipeWidth,pipeHeight3);
-		pipe3Upper.set(x2,pipeHeight3+ pipeDistance,pipeWidth,screenHeight - pipeHeight3- pipeDistance);
+		pipe1.setLowerPipePosition(x, 0);
+		pipe1.setUpperPipePosition(x,pipeHeight1+ pipeDistance);
+		pipe1.setLowerHeight(pipeHeight1);
+		pipe1.setPipeWidth(pipeWidth);
+		pipe1.setUpperHeight(screenHeight - pipeHeight1- pipeDistance);
 
-		// check if the bird collides with any of the pipes
-		if (bird.collides(pipe1Upper) || bird.collides(pipe1Lower) ||
-				bird.collides(pipe2Upper) || bird.collides(pipe2Lower) ||
-				bird.collides(pipe3Upper) || bird.collides(pipe3Lower)){
+		pipe2.setLowerPipePosition(x1, 0);
+		pipe2.setUpperPipePosition(x1,pipeHeight2+ pipeDistance);
+		pipe2.setLowerHeight(pipeHeight2);
+		pipe2.setPipeWidth(pipeWidth);
+		pipe2.setUpperHeight(screenHeight - pipeHeight2- pipeDistance);
+
+		pipe3.setLowerPipePosition(x2, 0);
+		pipe3.setUpperPipePosition(x2,pipeHeight3 + pipeDistance);
+		pipe3.setLowerHeight(pipeHeight3);
+		pipe3.setPipeWidth(pipeWidth);
+		pipe3.setUpperHeight(screenHeight - pipeHeight3 - pipeDistance);
+
 		
-			mode = -1;
+		if(bird.collides(pipe1) || bird.collides(pipe2) || bird.collides(pipe3)){
+			gameMode = -1; // game over
 			return;
 		}
-		
 		// if the bird did not collide update the screen 
 		x = x - sceneSpeed;
 		if(x < -screenWidth/2){

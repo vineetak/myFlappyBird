@@ -16,6 +16,12 @@ public class Bird {
 		shape.y = y;
 	}
 	
+	boolean collides(Pipe p){
+		
+		return (Intersector.overlaps(shape, p.upper) || Intersector.overlaps(shape, p.lower));
+		//return p.overlaps(shape);
+		
+	}
 	boolean collides(Rectangle r){
 		
 		return Intersector.overlaps(shape, r); 
