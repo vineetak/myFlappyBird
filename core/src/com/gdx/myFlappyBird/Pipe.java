@@ -30,8 +30,7 @@ public class Pipe {
 	void setLowerPipePosition(int lowerX, int lowerY){
 		lower.x = lowerX;
 		lower.y = lowerY;
-//		this.lowerX = lowerX;
-//		this.lowerY = lowerY;
+
 		
 	}
 	
