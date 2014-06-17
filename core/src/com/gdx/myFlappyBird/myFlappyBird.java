@@ -26,7 +26,10 @@ public class myFlappyBird extends ApplicationAdapter {
 	int minPipeHeight ;
 	int maxPipeHeight ;
 	
+	// veritcal distance between upper and lower parts of a pipe
 	int pipeDistance;
+	
+	// speed with which the pipes are moving left
 	int sceneSpeed;
 	
 	Bird bird;
@@ -68,10 +71,6 @@ public class myFlappyBird extends ApplicationAdapter {
 			
 		pipeWidth = screenWidth / 10;
 		
-//		x = screenWidth;
-//		x1 = screenWidth + screenWidth/3 ;
-//		x2 = x1  + screenWidth/3;
-		
 		x1 = screenWidth;
 		x2 = screenWidth + screenWidth/2 ;
 		x3 = x2  + screenWidth/2;
@@ -96,8 +95,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		// if the game is already over then make the bird fall and do not update the pipes
 		if(gameMode < 0){
 			if(yBird > 0){
-				//yBird = yBird  - 10;
-				//bird.setHeight(yBird);
+				yBird = yBird  - 10;
 			}
 			return;
 		}
