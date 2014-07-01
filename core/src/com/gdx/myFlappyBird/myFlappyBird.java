@@ -19,7 +19,8 @@ public class myFlappyBird extends ApplicationAdapter {
 	int  gameMode; // 0 running -1 gameover
 	int start = -1;
 	
-	int x1,x2,x3, xBird,yBird ;
+	int x1,x2,x3, xBird ;
+	double yBird;
 	int screenWidth , screenHeight;
 	int pipeWidth,pipeHeight1,pipeHeight2,pipeHeight3;
 
@@ -36,6 +37,8 @@ public class myFlappyBird extends ApplicationAdapter {
 	Bird bird;
 	Pipe pipe1,pipe2,pipe3;
 
+	double velocityY;
+	
 	public myFlappyBird(){
 
 		bird = new Bird(25,0,0);
@@ -48,6 +51,8 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		sceneSpeed = 4;
 		pipeDistance = 200;
+		
+		velocityY = 0;
 	}
 
 	@Override
@@ -85,7 +90,8 @@ public class myFlappyBird extends ApplicationAdapter {
 		xBird = 200;
 		yBird = screenHeight/2;
 
-		bird.setPosition(xBird+35 , yBird +35);
+		bird.setPosition(xBird+35 , (int) (yBird +35));
+		return;
 	}
 
 	@Override
@@ -94,21 +100,28 @@ public class myFlappyBird extends ApplicationAdapter {
 		// draw the Scene
 		drawScene();
 
+		// whenever the screen is touched move the bird upwards
 		if(Gdx.input.justTouched() ) {
 			start = 1;
-			yBird = yBird  + 75;
-			bird.setHeight(yBird + 35); 
+			velocityY = velocityY + 12;
 		}
-		else if(start > 0){
-			yBird = yBird  - 6;
-			bird.setHeight(yBird + 35);
+		else if(start > 0){  // the game starts only after the first touch
+			velocityY = velocityY - 0.45;
 		}
 		
+		if(gameMode >= 0){
+			yBird = yBird + velocityY;
+			bird.setHeight((int) (yBird + 35));
+		}
+		
+		
+		// if the screen is not touched then the scene does not move
 		if(start < 0)
 			return;
+		
 		// if the game is already over then make the bird fall and do not update the pipes
 		if(gameMode < 0){
-			if(yBird > 0){
+			if(yBird > -10){
 				yBird = yBird  - 10;
 			}
 			return;
@@ -119,12 +132,10 @@ public class myFlappyBird extends ApplicationAdapter {
 			return;
 		}
 
-		// update the pipes in the scene
+		// move the pipes in the scene towards left
 		updatePipePositions();
-
-		// whenever the screen is touched move the bird upwards
 		
-
+		return;
 	}
 
 	boolean checkForCollision(){
@@ -198,7 +209,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.draw(invertedPipe, x3,pipeHeight3+ pipeDistance ,pipeWidth,screenHeight - pipeHeight3- pipeDistance);
 
 		// draw the bird
-		batch.draw(birdTexture, xBird, yBird,70,70);
+		batch.draw(birdTexture, xBird, (float) yBird,70,70);
 		batch.end();
 
 		return;
