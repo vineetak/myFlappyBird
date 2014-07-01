@@ -38,6 +38,7 @@ public class myFlappyBird extends ApplicationAdapter {
 	Pipe pipe1,pipe2,pipe3;
 
 	double velocityY;
+	double backgroundX;
 	
 	public myFlappyBird(){
 
@@ -53,6 +54,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		pipeDistance = 200;
 		
 		velocityY = 0;
+		backgroundX = 0;
 	}
 
 	@Override
@@ -109,9 +111,16 @@ public class myFlappyBird extends ApplicationAdapter {
 			velocityY = velocityY - 0.45;
 		}
 		
+		// if the game is running
 		if(gameMode >= 0){
+			// move the bird with distance
 			yBird = yBird + velocityY;
-			bird.setHeight((int) (yBird + 35));
+			
+			if(yBird + 70 <= screenHeight){ // bird should not go above the screen height
+				bird.setHeight((int) (yBird + 35));
+			}
+			else // if the bird moves beyond the screen height set the velocity to zero so that it comes down
+				velocityY = 0;
 		}
 		
 		
@@ -196,8 +205,14 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.begin();
 
 		// draw the background
-		batch.draw(background, 0, 0,screenWidth,screenHeight);		
+//		batch.draw(background, 0, 0,screenWidth,screenHeight,0,1,1,0);		
 
+		float temp = (float) (screenWidth - (screenWidth * backgroundX)); 
+		batch.draw(background,0 ,0,temp,screenHeight,(float)(backgroundX),1,1,0);
+		
+		batch.draw(background,temp,0,(float) (screenWidth*backgroundX),screenHeight,0,1,(float)backgroundX,0);
+//		batch.draw(background,(float)(screenWidth * backgroundX ),0,(float) ((float)screenWidth * backgroundX),(float)screenHeight,0,1,(float)backgroundX,0);
+		//batch.draw(background, (float) (screenWidth*backgroundX),0,temp,screenHeight,(float)1,(float)1,(float)(1-backgroundX),(float)0);
 		// draw the pipes
 		batch.draw(pipeTexture, x1, 0,pipeWidth,pipeHeight1);
 		batch.draw(invertedPipe, x1,pipeHeight1+ pipeDistance ,pipeWidth,screenHeight - pipeHeight1- pipeDistance);
@@ -212,6 +227,11 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.draw(birdTexture, xBird, (float) yBird,70,70);
 		batch.end();
 
+		if(start > 0 && gameMode == 0){
+		backgroundX = backgroundX + 0.002;
+		if(backgroundX > 1)
+			backgroundX = 0;
+		}
 		return;
 	}
 }
