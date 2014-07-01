@@ -113,7 +113,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		
 		// if the game is running
 		if(gameMode >= 0){
-			// move the bird with distance
+			// move the bird upward as per the velocity
 			yBird = yBird + velocityY;
 			
 			if(yBird + 70 <= screenHeight){ // bird should not go above the screen height
@@ -204,15 +204,11 @@ public class myFlappyBird extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		// draw the background
-//		batch.draw(background, 0, 0,screenWidth,screenHeight,0,1,1,0);		
-
+		// draw the moving background
 		float temp = (float) (screenWidth - (screenWidth * backgroundX)); 
 		batch.draw(background,0 ,0,temp,screenHeight,(float)(backgroundX),1,1,0);
-		
 		batch.draw(background,temp,0,(float) (screenWidth*backgroundX),screenHeight,0,1,(float)backgroundX,0);
-//		batch.draw(background,(float)(screenWidth * backgroundX ),0,(float) ((float)screenWidth * backgroundX),(float)screenHeight,0,1,(float)backgroundX,0);
-		//batch.draw(background, (float) (screenWidth*backgroundX),0,temp,screenHeight,(float)1,(float)1,(float)(1-backgroundX),(float)0);
+
 		// draw the pipes
 		batch.draw(pipeTexture, x1, 0,pipeWidth,pipeHeight1);
 		batch.draw(invertedPipe, x1,pipeHeight1+ pipeDistance ,pipeWidth,screenHeight - pipeHeight1- pipeDistance);
