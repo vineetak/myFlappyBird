@@ -105,10 +105,12 @@ public class myFlappyBird extends ApplicationAdapter {
 		// whenever the screen is touched move the bird upwards
 		if(Gdx.input.justTouched() ) {
 			start = 1;
-			velocityY = velocityY + 12;
+			velocityY = 14;
+			//velocityY = velocityY + 12;
 		}
 		else if(start > 0){  // the game starts only after the first touch
-			velocityY = velocityY - 0.45;
+			
+			velocityY = velocityY - 0.8;
 		}
 		
 		// if the game is running
@@ -131,11 +133,16 @@ public class myFlappyBird extends ApplicationAdapter {
 		// if the game is already over then make the bird fall and do not update the pipes
 		if(gameMode < 0){
 			if(yBird > -10){
-				yBird = yBird  - 10;
+				yBird = yBird  - 15;
 			}
 			return;
 		}
 
+		
+		// if the bird falls below the screen then game over
+		if(yBird <= 0){
+			gameMode = -1;
+		}
 		// game over if there is a collision
 		if(checkForCollision()){
 			return;
