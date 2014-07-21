@@ -22,16 +22,16 @@ public class myFlappyBird extends ApplicationAdapter {
 	// to display the score
 	private BitmapFont font;
 
-	Music gameOverMusic;//,tapMusic;
+	Music gameOverMusic;
 	Sound tapSound;
 	int  gameMode = 0; // -1 game over 0 start 1 running
 	boolean played = false;
 	
-	int x1,x2,x3, xBird ;
+	int x1,x2,x3,x4, xBird ;
 	int scoreLine,score;
 	double yBird;
 	int screenWidth , screenHeight;
-	int pipeWidth,pipeHeight1,pipeHeight2,pipeHeight3;
+	int pipeWidth,pipeHeight1,pipeHeight2,pipeHeight3,pipeHeight4;
 
 	// minimum and maximum pipe height
 	int minPipeHeight ;
@@ -44,7 +44,7 @@ public class myFlappyBird extends ApplicationAdapter {
 	int sceneSpeed;
 
 	Bird bird;
-	Pipe pipe1,pipe2,pipe3;
+	Pipe pipe1,pipe2,pipe3,pipe4;
 
 	double velocityY;
 	double backgroundX;
@@ -56,7 +56,8 @@ public class myFlappyBird extends ApplicationAdapter {
 		pipe1 = new Pipe();
 		pipe2 = new Pipe();
 		pipe3 = new Pipe();
-
+		pipe4 = new Pipe();
+		
 		gameMode = 0; // game start
 
 		sceneSpeed = 4;
@@ -75,8 +76,6 @@ public class myFlappyBird extends ApplicationAdapter {
         font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         	
         font.setScale(5,5);
-        
-//        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("fall.mp3"));
         
         gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("fall.mp3"));
         gameOverMusic.setLooping(false);
@@ -102,21 +101,27 @@ public class myFlappyBird extends ApplicationAdapter {
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
 
-		minPipeHeight = 200;
-		maxPipeHeight = screenHeight - 350;
+		minPipeHeight = 100;
+		maxPipeHeight = screenHeight - 250;
 
-		pipeWidth = screenWidth / 10;
-
+//		pipeWidth = screenWidth / 10;
+		pipeWidth = screenWidth / 12;
+//		x1 = screenWidth;
+//		x2 = screenWidth + screenWidth/2 ;
+//		x3 = x2  + screenWidth/2;
+		
 		x1 = screenWidth;
-		x2 = screenWidth + screenWidth/2 ;
-		x3 = x2  + screenWidth/2;
+		x2 = screenWidth + screenWidth/3 ;
+		x3 = x2  + screenWidth/3;
+		x4 = x3  + screenWidth/3;
 		scoreLine = 1;
 		
 		// generate the initial pipe heights randomly
 		pipeHeight1 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
 		pipeHeight2 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
 		pipeHeight3 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
-
+		pipeHeight4 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
+		
 		xBird = 200;
 		yBird = screenHeight/2;
 
@@ -134,7 +139,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		// if the game is over this is not done
 		if(Gdx.input.justTouched() && gameMode >= 0) {
 			gameMode = 1;
-			velocityY = 14;
+			velocityY = 13;
 			tapSound.play();
 
 		}
@@ -143,7 +148,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		if(gameMode == 1){
 
 			// decrease the bird velocity
-			velocityY = velocityY - 0.8;
+			velocityY = velocityY - 1;
 			
 			// move the bird upward as per the velocity
 			yBird = yBird + velocityY;
@@ -209,11 +214,13 @@ public class myFlappyBird extends ApplicationAdapter {
 		else if(scoreLine == 3){
 			scoreLinePosition = x3;
 		}
-		
+		else if(scoreLine == 4){
+			scoreLinePosition = x3;
+		}
 		if(xBird >= scoreLinePosition){
 			score++;
 			scoreLine = scoreLine + 1;
-			if(scoreLine > 3)
+			if(scoreLine > 4)
 				scoreLine = 1;
 		}
 	}
@@ -224,9 +231,14 @@ public class myFlappyBird extends ApplicationAdapter {
 		velocityY = 0;
 		backgroundX = 0;
 		
+//		x1 = screenWidth;
+//		x2 = screenWidth + screenWidth/2 ;
+//		x3 = x2  + screenWidth/2;
+
 		x1 = screenWidth;
-		x2 = screenWidth + screenWidth/2 ;
-		x3 = x2  + screenWidth/2;
+		x2 = screenWidth + screenWidth/3 ;
+		x3 = x2  + screenWidth/3;
+		x4 = x3  + screenWidth/3;
 		
 		gameMode = 0; // game start
 		
@@ -260,8 +272,14 @@ public class myFlappyBird extends ApplicationAdapter {
 		pipe3.setPipeWidth(pipeWidth);
 		pipe3.setUpperHeight(screenHeight - pipeHeight3 - pipeDistance);
 
+		pipe4.setLowerPipePosition(x4, 0);
+		pipe4.setUpperPipePosition(x4,pipeHeight4 + pipeDistance);
+		pipe4.setLowerHeight(pipeHeight4);
+		pipe4.setPipeWidth(pipeWidth);
+		pipe4.setUpperHeight(screenHeight - pipeHeight4 - pipeDistance);
 
-		if(bird.collides(pipe1) || bird.collides(pipe2) || bird.collides(pipe3)){
+		
+		if(bird.collides(pipe1) || bird.collides(pipe2) || bird.collides(pipe3) ||bird.collides(pipe4) ){
 			gameMode = -1; // game over
 			return true;
 		}
@@ -271,36 +289,40 @@ public class myFlappyBird extends ApplicationAdapter {
 	void updatePipePositions(){
 
 		x1 = x1 - sceneSpeed;
-		if(x1 < -screenWidth/2){
+		if(x1 < -screenWidth/3){
 			x1 = screenWidth;
 			pipeHeight1 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));		
 		}
 
 		x2 = x2 - sceneSpeed;
-		if(x2 < -screenWidth/2){
+		if(x2 < -screenWidth/3){
 
 			pipeHeight2 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
 			x2 = screenWidth;
 		}
 
 		x3 = x3 - sceneSpeed;
-		if(x3 < -screenWidth/2){
+		if(x3 < -screenWidth/3){
 			pipeHeight3 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
 			x3 = screenWidth;
 		}	
 
+		x4 = x4 - sceneSpeed;
+		if(x4 < -screenWidth/3){
+			pipeHeight4 = minPipeHeight + (int)(Math.random() * ((maxPipeHeight - minPipeHeight) + 1));
+			x4 = screenWidth;
+		}	
 		return;
 	}
 
 	void drawScene(){
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
 
-		// display tap 
+		Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		batch.begin();
 	
-		
+//		batch.rotate(90);
 		// draw the moving background
 		float temp = (float) (screenWidth - (screenWidth * backgroundX)); 
 		batch.draw(background,0 ,0,temp,screenHeight,(float)(backgroundX),1,1,0);
@@ -316,6 +338,9 @@ public class myFlappyBird extends ApplicationAdapter {
 		batch.draw(pipeTexture, x3, 0,pipeWidth,pipeHeight3);
 		batch.draw(invertedPipe, x3,pipeHeight3+ pipeDistance ,pipeWidth,screenHeight - pipeHeight3- pipeDistance);
 
+		batch.draw(pipeTexture, x4, 0,pipeWidth,pipeHeight4);
+		batch.draw(invertedPipe, x4,pipeHeight4+ pipeDistance ,pipeWidth,screenHeight - pipeHeight4- pipeDistance);
+		
 		// draw the bird
 		batch.draw(birdTexture, xBird, (float) yBird,70,70);
 		if(gameMode == 0  )
@@ -326,9 +351,6 @@ public class myFlappyBird extends ApplicationAdapter {
 		if(gameMode < 0){
 			batch.draw(gameOverTexture, screenWidth/2-150, screenHeight/2-50,300,150);
 			batch.draw(replayTexture, screenWidth/2-75, screenHeight/2-250, 150, 150);
-			
-	       // gameOverSound.play();
-
 		}
 		// draw the score
 		if(score > 0){
@@ -337,11 +359,11 @@ public class myFlappyBird extends ApplicationAdapter {
 		}
 		batch.end();
 
-//		if(start > 0 && gameMode == 0){
+		// move the background 
 		if(gameMode == 1){
-		backgroundX = backgroundX + 0.002;
-		if(backgroundX > 1)
-			backgroundX = 0;
+			backgroundX = backgroundX + 0.002;
+			if(backgroundX > 1)
+				backgroundX = 0;
 		}
 		
 		
