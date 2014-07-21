@@ -23,7 +23,7 @@ public class myFlappyBird extends ApplicationAdapter {
 	private BitmapFont font;
 
 	Music gameOverMusic;
-	Sound tapSound;
+	Sound tapSound,scoreSound;
 	int  gameMode = 0; // -1 game over 0 start 1 running
 	boolean played = false;
 	
@@ -61,7 +61,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		gameMode = 0; // game start
 
 		sceneSpeed = 4;
-		pipeDistance = 200;
+		pipeDistance = 210;
 		
 		velocityY = 0;
 		backgroundX = 0;
@@ -73,15 +73,15 @@ public class myFlappyBird extends ApplicationAdapter {
 		// create a new sprite batch to render the graphics
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-        font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        font.setColor(0.1f, 0.1f, 0.1f, 1.0f);
         	
-        font.setScale(5,5);
+        font.setScale(5,6);
         
         gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("fall.mp3"));
         gameOverMusic.setLooping(false);
         
         tapSound = Gdx.audio.newSound(Gdx.files.internal("tap.mp3"));
-        //tapSound.setLooping(false);
+        scoreSound = Gdx.audio.newSound(Gdx.files.internal("score.wav"));
 
         // create a texture for the pipes
 		pipeTexture = new Texture("pipe.jpg");
@@ -104,14 +104,15 @@ public class myFlappyBird extends ApplicationAdapter {
 		minPipeHeight = 100;
 		maxPipeHeight = screenHeight - 250;
 
+		/*Code for 3 pipes*/ 
 //		pipeWidth = screenWidth / 10;
-		pipeWidth = screenWidth / 12;
 //		x1 = screenWidth;
 //		x2 = screenWidth + screenWidth/2 ;
 //		x3 = x2  + screenWidth/2;
 		
-		x1 = screenWidth;
-		x2 = screenWidth + screenWidth/3 ;
+		pipeWidth = screenWidth / 12;
+		x1 = screenWidth - screenWidth/3;
+		x2 = x1 + screenWidth/3;
 		x3 = x2  + screenWidth/3;
 		x4 = x3  + screenWidth/3;
 		scoreLine = 1;
@@ -140,7 +141,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		if(Gdx.input.justTouched() && gameMode >= 0) {
 			gameMode = 1;
 			velocityY = 13;
-			tapSound.play();
+			tapSound.play((float) 0.5);
 
 		}
 		
@@ -159,16 +160,17 @@ public class myFlappyBird extends ApplicationAdapter {
 			else // if the bird moves beyond the screen height set the velocity to zero so that it comes down
 				velocityY = -1;
 		
+			calculateScore();
 		}
 
-		calculateScore();
+		
 		
 		// if the screen is not touched then the scene does not move
 		if(gameMode == 0)
 			return;
 		
 		// if the game is already over then make the bird fall and do not update the pipes
-		if(gameMode < 0){
+		if(gameMode == -1){
 			tapSound.stop();
 			
 			if(played == false){
@@ -189,17 +191,14 @@ public class myFlappyBird extends ApplicationAdapter {
 		}
 
 		// if the bird falls below the screen then game over
-		if(yBird <= 0){
+		if(yBird <= 0 || checkForCollision()) {
 			gameMode = -1;
-		}
-		// game over if there is a collision
-		if(checkForCollision()){
 			return;
 		}
 
+
 		// move the pipes in the scene towards left
 		updatePipePositions();
-		
 		return;
 	}
 
@@ -215,9 +214,12 @@ public class myFlappyBird extends ApplicationAdapter {
 			scoreLinePosition = x3;
 		}
 		else if(scoreLine == 4){
-			scoreLinePosition = x3;
+			scoreLinePosition = x4;
 		}
 		if(xBird >= scoreLinePosition){
+			tapSound.stop();
+
+			scoreSound.play();
 			score++;
 			scoreLine = scoreLine + 1;
 			if(scoreLine > 4)
@@ -235,8 +237,8 @@ public class myFlappyBird extends ApplicationAdapter {
 //		x2 = screenWidth + screenWidth/2 ;
 //		x3 = x2  + screenWidth/2;
 
-		x1 = screenWidth;
-		x2 = screenWidth + screenWidth/3 ;
+		x1 = screenWidth - screenWidth/3;
+		x2 = x1 + screenWidth/3;
 		x3 = x2  + screenWidth/3;
 		x4 = x3  + screenWidth/3;
 		
@@ -353,10 +355,10 @@ public class myFlappyBird extends ApplicationAdapter {
 			batch.draw(replayTexture, screenWidth/2-75, screenHeight/2-250, 150, 150);
 		}
 		// draw the score
-		if(score > 0){
-			String scoreString = Integer.toString(score);
-			font.draw(batch, scoreString, screenWidth/2-20, screenHeight/2+ 300);
-		}
+		
+		String scoreString = Integer.toString(score);
+		font.draw(batch, scoreString, screenWidth/2-20, screenHeight/2+ 300);
+		
 		batch.end();
 
 		// move the background 
