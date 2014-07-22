@@ -112,11 +112,11 @@ public class myFlappyBird extends ApplicationAdapter {
 		scoreFont = new BitmapFont(Gdx.files.internal("font.fnt"), new TextureRegion(fontTexture), false);
 //		scoreFont = new BitmapFont();
 //		scoreFont.setColor(0.1f, 0.1f, 0.1f, 1.0f);
-//		scoreFont.setScale(5, 5);
+		scoreFont.setScale((float) 1.2);
 
 		highScoreFont = new BitmapFont(Gdx.files.internal("textFont.fnt"), new TextureRegion(textFontTexture), false);
 //		highScoreFont.setColor(1, 1, 1, 1);
-//		highScoreFont.setScale(4);
+		highScoreFont.setScale((float) 0.9);
 
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
@@ -419,10 +419,10 @@ public class myFlappyBird extends ApplicationAdapter {
 
 			highScoreFont.draw(batch, Integer.toString(getHighestScore()),
 					(float) (screenWidth / 2 + 1.1 * screenWidth / 8),
-					(float) (2.5 * screenHeight / 6));
+					(float) (2.4 * screenHeight / 6));
 			highScoreFont.draw(batch, Integer.toString(score),
 					(float) (screenWidth / 2 - 1.5 * screenWidth / 8),
-					(float) (2.5 * screenHeight / 6));
+					(float) (2.4 * screenHeight / 6));
 
 			
 				
