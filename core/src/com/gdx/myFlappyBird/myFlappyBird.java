@@ -410,17 +410,17 @@ public class myFlappyBird extends ApplicationAdapter {
 			batch.draw(gameOverBackgroundTexture, screenWidth / 8,
 					screenHeight / 6, 6 * screenWidth / 8, 4 * screenHeight / 6);
 
-			scoreFont.draw(batch, "Score",
+			scoreFont.draw(batch, "Best",
 					screenWidth / 2 - 2 * screenWidth / 8,
 					(float) (3.2 * screenHeight / 6));
-			scoreFont.draw(batch, "Best",
+			scoreFont.draw(batch, "Score",
 					(float) (screenWidth / 2 + 0.8 * screenWidth / 8),
 					(float) (3.2 * screenHeight / 6));
 
-			highScoreFont.draw(batch, Integer.toString(getHighestScore()),
+			highScoreFont.draw(batch, Integer.toString(score),
 					(float) (screenWidth / 2 + 1.1 * screenWidth / 8),
 					(float) (2.4 * screenHeight / 6));
-			highScoreFont.draw(batch, Integer.toString(score),
+			highScoreFont.draw(batch, Integer.toString(getHighestScore()),
 					(float) (screenWidth / 2 - 1.5 * screenWidth / 8),
 					(float) (2.4 * screenHeight / 6));
 
@@ -434,8 +434,8 @@ public class myFlappyBird extends ApplicationAdapter {
 					screenWidth / 8);
 			
 			if(newHighScore){
-				batch.draw(newHighScoreTexture,screenWidth / 2 -  (float)(1.2 * screenWidth / 8),
-						(float) (2.6 * screenHeight / 6), screenWidth/4,screenHeight/4);
+				batch.draw(newHighScoreTexture,screenWidth / 2 +  (float)(1.7* screenWidth / 8),
+						(float) (2.5 * screenHeight / 6), screenWidth/5,screenHeight/4);
 			}
 		}
 		// display score and high score when the game is running
