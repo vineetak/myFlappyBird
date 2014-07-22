@@ -9,12 +9,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class myFlappyBird extends ApplicationAdapter {
 
 	SpriteBatch batch;
 	Texture pipeTexture, invertedPipe, background, birdTexture,
-			gameOverTexture, tapTexture, replayTexture, //fontTexture,
+			gameOverTexture, tapTexture, replayTexture, fontTexture, textFontTexture,
 			gameOverBackgroundTexture, trophyTexture,newHighScoreTexture;
 	// to display the score
 	private BitmapFont scoreFont, highScoreFont;
@@ -99,7 +100,8 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		tapTexture = new Texture("hand.png");
 
-		//fontTexture = new Texture("font.png");
+		fontTexture = new Texture("font.png");
+		textFontTexture = new Texture("textFont.png");
 
 		gameOverBackgroundTexture = new Texture("scoreboard.jpg");
 		
@@ -107,15 +109,14 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		newHighScoreTexture = new Texture("highScore.png");
 		
-		// font = new BitmapFont(Gdx.files.internal("font.fnt"), new
-		// TextureRegion(fontTexture), false);
-		scoreFont = new BitmapFont();
-		scoreFont.setColor(0.1f, 0.1f, 0.1f, 1.0f);
-		scoreFont.setScale(5, 5);
+		scoreFont = new BitmapFont(Gdx.files.internal("font.fnt"), new TextureRegion(fontTexture), false);
+//		scoreFont = new BitmapFont();
+//		scoreFont.setColor(0.1f, 0.1f, 0.1f, 1.0f);
+//		scoreFont.setScale(5, 5);
 
-		highScoreFont = new BitmapFont();
-		highScoreFont.setColor(1, 1, 1, 1);
-		highScoreFont.setScale(4);
+		highScoreFont = new BitmapFont(Gdx.files.internal("textFont.fnt"), new TextureRegion(textFontTexture), false);
+//		highScoreFont.setColor(1, 1, 1, 1);
+//		highScoreFont.setScale(4);
 
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
