@@ -14,16 +14,17 @@ public class myFlappyBird extends ApplicationAdapter {
 
 	SpriteBatch batch;
 	Texture pipeTexture, invertedPipe, background, birdTexture,
-			gameOverTexture, tapTexture, replayTexture, fontTexture,
-			gameOverBackgroundTexture, trophyTexture;
+			gameOverTexture, tapTexture, replayTexture, //fontTexture,
+			gameOverBackgroundTexture, trophyTexture,newHighScoreTexture;
 	// to display the score
 	private BitmapFont scoreFont, highScoreFont;
 
 	Music gameOverMusic;
-	Sound tapSound, scoreSound;
+	Sound tapSound, scoreSound,highScoreSound;
 	int gameMode = 0; // -1 game over 0 start 1 running
 	boolean played = false;
-
+	boolean newHighScore = false;
+	
 	int x1, x2, x3, x4, xBird;
 	int scoreLine, score;
 	double yBird;
@@ -78,7 +79,7 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		tapSound = Gdx.audio.newSound(Gdx.files.internal("tap.mp3"));
 		scoreSound = Gdx.audio.newSound(Gdx.files.internal("score.wav"));
-
+		highScoreSound = Gdx.audio.newSound(Gdx.files.internal("highScore.mp3"));
 		// create a texture for the pipes
 		pipeTexture = new Texture("pipe.jpg");
 		invertedPipe = new Texture("invertedPipe.jpg");
@@ -94,11 +95,14 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		tapTexture = new Texture("hand.png");
 
-		fontTexture = new Texture("font.png");
+		//fontTexture = new Texture("font.png");
 
 		gameOverBackgroundTexture = new Texture("scoreboard.jpg");
+		
 		trophyTexture = new Texture("trophy.png");
 
+		newHighScoreTexture = new Texture("highScore.png");
+		
 		// font = new BitmapFont(Gdx.files.internal("font.fnt"), new
 		// TextureRegion(fontTexture), false);
 		scoreFont = new BitmapFont();
@@ -189,6 +193,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		if (gameMode == -1) {
 			tapSound.stop();
 
+			// to avoid playing the music again and again
 			if (played == false) {
 				gameOverMusic.play();
 				played = true;
@@ -237,6 +242,15 @@ public class myFlappyBird extends ApplicationAdapter {
 			int h = getHighestScore();
 			// update the highest score
 			if (score > h) {
+				
+				if(newHighScore == false){
+					scoreSound.stop();
+					highScoreSound.play();
+					newHighScore = true;
+					// play the new high score sound
+				}
+					
+					
 				System.out.println(h + " " + score);
 				setHighestScore(score);
 			}
@@ -271,6 +285,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		scoreLine = 1;
 
 		played = false;
+		newHighScore = false;
 	}
 
 	boolean checkForCollision() {
@@ -384,28 +399,35 @@ public class myFlappyBird extends ApplicationAdapter {
 			batch.draw(gameOverBackgroundTexture, screenWidth / 8,
 					screenHeight / 6, 6 * screenWidth / 8, 4 * screenHeight / 6);
 
-			scoreFont.draw(batch, "Best",
-					screenWidth / 2 - 2 * screenWidth / 8,
-					(float) (3.5 * screenHeight / 6));
 			scoreFont.draw(batch, "Score",
+					screenWidth / 2 - 2 * screenWidth / 8,
+					(float) (3.2 * screenHeight / 6));
+			scoreFont.draw(batch, "Best",
 					(float) (screenWidth / 2 + 0.8 * screenWidth / 8),
-					(float) (3.5 * screenHeight / 6));
+					(float) (3.2 * screenHeight / 6));
 
-			highScoreFont.draw(batch, Integer.toString(score),
-					(float) (screenWidth / 2 + 1.5 * screenWidth / 8),
-					(float) (2.8 * screenHeight / 6));
 			highScoreFont.draw(batch, Integer.toString(getHighestScore()),
+					(float) (screenWidth / 2 + 1.1 * screenWidth / 8),
+					(float) (2.5 * screenHeight / 6));
+			highScoreFont.draw(batch, Integer.toString(score),
 					(float) (screenWidth / 2 - 1.5 * screenWidth / 8),
-					(float) (2.8 * screenHeight / 6));
+					(float) (2.5 * screenHeight / 6));
 
+			
+				
 			batch.draw(gameOverTexture, screenWidth / 2 - screenWidth / 4,
 					(float) (3.8 * screenHeight / 6), 4 * screenWidth / 8,
 					screenHeight / 6);
 			batch.draw(replayTexture, screenWidth / 2 - screenWidth / 16,
 					(float) (screenHeight / 5.5), screenWidth / 8,
 					screenWidth / 8);
+			
+			if(newHighScore){
+				batch.draw(newHighScoreTexture,screenWidth / 2 -  (float)(1.2 * screenWidth / 8),
+						(float) (2.6 * screenHeight / 6), screenWidth/4,screenHeight/4);
+			}
 		}
-		// dispaly score and high score when the game is running
+		// display score and high score when the game is running
 
 		if (gameMode == 1) {
 			String scoreString = Integer.toString(score);
