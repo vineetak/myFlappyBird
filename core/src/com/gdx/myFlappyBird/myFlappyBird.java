@@ -20,7 +20,8 @@ public class myFlappyBird extends ApplicationAdapter {
 	private BitmapFont scoreFont, highScoreFont;
 
 	Music gameOverMusic;
-	Sound tapSound, scoreSound,highScoreSound;
+	Sound tapSound, scoreSound,highScoreSound,hitSound,clickSound;
+	
 	int gameMode = 0; // -1 game over 0 start 1 running
 	boolean played = false;
 	boolean newHighScore = false;
@@ -74,12 +75,15 @@ public class myFlappyBird extends ApplicationAdapter {
 		// create a new sprite batch to render the graphics
 		batch = new SpriteBatch();
 
-		gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("fall.mp3"));
-		gameOverMusic.setLooping(false);
+	//	gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("fall.mp3"));
+		//gameOverMusic.setLooping(false);
 
 		tapSound = Gdx.audio.newSound(Gdx.files.internal("tap.mp3"));
 		scoreSound = Gdx.audio.newSound(Gdx.files.internal("score.wav"));
 		highScoreSound = Gdx.audio.newSound(Gdx.files.internal("highScore.mp3"));
+		hitSound = Gdx.audio.newSound(Gdx.files.internal("hit.mp3"));
+		clickSound = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
+		
 		// create a texture for the pipes
 		pipeTexture = new Texture("pipe.jpg");
 		invertedPipe = new Texture("invertedPipe.jpg");
@@ -194,18 +198,23 @@ public class myFlappyBird extends ApplicationAdapter {
 			tapSound.stop();
 
 			// to avoid playing the music again and again
-			if (played == false) {
-				gameOverMusic.play();
-				played = true;
-			}
+//			if (played == false) {
+//			//	gameOverMusic.play();
+//				played = true;
+//			}
 
 			if (yBird > -10) {
 				yBird = yBird - 15;
 
 			}
-
+			else if(played == false){
+				played = true;
+				hitSound.play();
+			}
 			// if the screen is tapped again
 			else if (Gdx.input.justTouched()) {
+				// play the button click sound
+				clickSound.play();
 				restart();
 			}
 			return;
@@ -262,7 +271,7 @@ public class myFlappyBird extends ApplicationAdapter {
 
 	private void restart() {
 
-		gameOverMusic.stop();
+		//gameOverMusic.stop();
 		velocityY = 0;
 		backgroundX = 0;
 
@@ -317,6 +326,7 @@ public class myFlappyBird extends ApplicationAdapter {
 		if (bird.collides(pipe1) || bird.collides(pipe2)
 				|| bird.collides(pipe3) || bird.collides(pipe4)) {
 			gameMode = -1; // game over
+			hitSound.play();
 			return true;
 		}
 
