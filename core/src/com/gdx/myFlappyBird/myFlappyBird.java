@@ -26,6 +26,7 @@ public class myFlappyBird extends ApplicationAdapter {
 	int gameMode = 0; // -1 game over 0 start 1 running
 	boolean played = false;
 	boolean newHighScore = false;
+	boolean easy = true; // to make the game easy
 	
 	int x1, x2, x3, x4, xBird;
 	int scoreLine, score;
@@ -64,8 +65,12 @@ public class myFlappyBird extends ApplicationAdapter {
 		gameMode = 0; // game start
 
 		sceneSpeed = 4;
-		pipeDistance = 210;
-
+		if(easy == true){
+			pipeDistance = 380;
+		}
+		else{
+			pipeDistance = 210;
+		}
 		velocityY = 0;
 		backgroundX = 0;
 
@@ -97,33 +102,32 @@ public class myFlappyBird extends ApplicationAdapter {
 
 		gameOverTexture = new Texture("gameover.png");
 		replayTexture = new Texture("play.png");
-
 		tapTexture = new Texture("hand.png");
-
 		fontTexture = new Texture("font.png");
 		textFontTexture = new Texture("textFont.png");
-
 		gameOverBackgroundTexture = new Texture("scoreboard.jpg");
-		
 		trophyTexture = new Texture("trophy.png");
-
 		newHighScoreTexture = new Texture("highScore.png");
 		
 		scoreFont = new BitmapFont(Gdx.files.internal("font.fnt"), new TextureRegion(fontTexture), false);
-//		scoreFont = new BitmapFont();
-//		scoreFont.setColor(0.1f, 0.1f, 0.1f, 1.0f);
 		scoreFont.setScale((float) 1.2);
 
 		highScoreFont = new BitmapFont(Gdx.files.internal("textFont.fnt"), new TextureRegion(textFontTexture), false);
-//		highScoreFont.setColor(1, 1, 1, 1);
 		highScoreFont.setScale((float) 0.9);
 
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
 
-		minPipeHeight = 100;
-		maxPipeHeight = screenHeight - 250;
+		if(easy == true){
+			minPipeHeight = 100;
+			maxPipeHeight = screenHeight/2 ;
 
+		}
+		else{
+			minPipeHeight = 100;
+			maxPipeHeight = screenHeight - 250;	
+		}
+		
 		/* Code for 3 pipes */
 		// pipeWidth = screenWidth / 10;
 		// x1 = screenWidth;
